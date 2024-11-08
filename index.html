@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UrbanMaven</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=search" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-EXyBWmFVg2ig5hz2Y3N0/ttr75Zo4mD+IhW4y90oZ1vK2MBmCtaw+f6JPjG2Yo7X"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        /* Custom Navbar Styling */
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .navbar {
+            box-shadow: 0 4px 8px rgba(71, 47, 47, 0.1);
+            padding: 1rem 2rem;
+            background-color: #000000;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFFFFF !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: #FFFFFF !important;
+            transition: transform 0.4s ease-in-out, color 0.4s ease-in-out;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #FFFFFF !important;
+            transform: scale(1.1);
+        }
+
+        /* Search Bar */
+        .form-control-sm {
+            background-color: #EEEEEE;
+            border: 1px solid #444;
+            color: #000000;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .form-control-sm::placeholder {
+            color: #777;
+        }
+
+        .form-control-sm:focus {
+            background-color: #FFFFFF;
+            color: #000000;
+            outline: none;
+            border-color: #000000;
+            transform: scale(1.05);
+        }
+
+        /* Search Button with Transition */
+        .btn-search {
+            background-color: #000000;
+            color: #FFFFFF;
+            border: 1px solid #FFFFFF;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .btn-search:hover {
+            background-color: #FFFFFF;
+            color: #000000;
+        }
+
+        /* Logout Button with Pop-up Effect */
+        .btn-light {
+            background-color: #FFFFFF;
+            color: #000000;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn-light:hover {
+            background-color: #919290;
+            transform: scale(1.1);
+        }
+
+
+
+        /* Pop-up Animation */
+        @keyframes fadeInPop {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Dropdown Styling */
+        .dropdown {
+            margin-top: 20px;
+            width: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown:hover {
+            transform: scale(1.05);
+        }
+
+        /* Main service categories styling */
+        .services-list {
+            display: flex;
+            justify-content: center;
+            gap: 70px;
+            margin: 10px 0;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .service-item {
+            position: relative;
+            text-align: center;
+            font-size: 1.4rem;
+            color: #000000;
+            padding-bottom: 5px;
+            transition: color 0.3s;
+        }
+
+        .service-item.active {
+            color: #007bff;
+        }
+
+        /* Underline effect for active category */
+        .service-item.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #007bff;
+            transition: width 0.3s ease;
+        }
+
+        .service-item:not(.active)::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background-color: #007bff;
+            transition: width 0.3s ease;
+        }
+
+        .service-item:hover::after {
+            width: 100%;
+        }
+
+        /* Subcategory accordion styling */
+        .subcategory-container {
+            display: none;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .subcategory-item {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+            background-color: #f9f9f9;
+            font-size: 1.2rem;
+            color: #333;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .subcategory-item:hover {
+            background-color: #e0e0e0;
+        }
+
+        .divider {
+            border: none;
+            height: 2px;
+            background-color: #000000;
+            margin: 10px auto;
+            width: 80%;
+            font-weight: bold;
+            justify-content: center;
+        }
+
+        /* Pop-up animation for the dynamically created card */
+        @keyframes popUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Consistent styling for all cards */
+
+        .card {
+            background-color: #EEEEEE;
+            color: #000000;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 20px auto;
+            width: 97%;
+            box-shadow: 0 8px 16px rgba(255, 255, 255, 0.4);
+            animation: fadeInPop 1s ease forwards;
+            border-color: #EEEEEE;
+        }
+
+
+        /* Additional styling for dynamically created cards */
+        .new-card {
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+            animation: popUp 0.5s ease forwards;
+        }
+
+        .list-group-item {
+            background-color: #000000;
+            color: #FFFFFF;
+            border: 0;
+        }
+
+        .right-section .card {
+            max-height: 300px;
+            /* Set a max height for the stylist list */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+        }
+
+        /* Custom scrollbar styles for Webkit browsers */
+        .right-section .card::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .left-section .card {
+            max-height: 300px;
+            /* Set a max height for the stylist list */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+        }
+
+        .heading {
+            position: sticky;
+            top: 0;
+            background-color: #ffffff;
+            z-index: 10;
+            padding: 10px;
+        }
+
+
+        .form-select {
+            background-color: #EEEEEE;
+            color: #000000;
+        }
+
+        /* General styling */
+        .stylist-select {
+            font-size: 1.2em;
+            /* Increase font size */
+            padding: 8px;
+            border: 1px solid #ddd;
+            width: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Hover effect for options */
+        .stylist-select option {
+            padding: 6px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Option hover animation (only applies visually in some browsers) */
+        .stylist-select option:hover {
+            background-color: #f0f0f0;
+            /* Lighter background on hover */
+            color: #333;
+            /* Darker text color */
+            transform: scale(1.01);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-list1 {
+            background-color: #CCCCCC;
+            color: #000000;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 20px auto;
+            box-shadow: 0 8px 16px rgba(255, 255, 255, 0.4);
+            animation: fadeInPop 1s ease forwards;
+            border-color: #EEEEEE;
+            margin-top: 140px;
+
+        }
+
+        .card-list {
+            background-color: #CCCCCC;
+            color: #000000;
+            border-radius: 15px;
+            padding: 40px;
+            margin: 20px auto;
+            width: 97%;
+            box-shadow: 0 8px 16px rgba(255, 255, 255, 0.4);
+            animation: fadeInPop 1s ease forwards;
+            border-color: #EEEEEE;
+            height: 90%;
+        }
+
+        /* Custom dropdown styling */
+        .custom-dropdown {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #EEEEEE;
+            border-radius: 5px;
+        }
+
+        /* Each stylist option */
+        .stylist-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .stylist-option:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Stylist name and rating */
+        .stylist-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Book button styling */
+        .book-btn {
+            padding: 6px 12px;
+            font-size: 0.9em;
+        }
+
+        /* General Styles */
+        h2 {
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        /* Commitment Section */
+        .commitment-section,
+        .how-it-works-section {
+            padding: 60px 20px;
+            background-color: #000000;
+        }
+
+        .commitment-cards,
+        .steps-cards {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .commitment-card,
+        .step-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            flex: 1 1 300px;
+            max-width: 300px;
+        }
+
+        .commitment-card h3,
+        .step-card h3,
+        .step-card h4 {
+            color: #000000;
+            margin-bottom: 15px;
+        }
+
+        .commitment-card p,
+        .step-card p {
+            color: #333;
+            font-size: 1em;
+        }
+
+        /* Step-specific Styles */
+        .step-card h3 {
+            font-size: 1.3em;
+            color: #000000;
+        }
+
+        .step-card h4 {
+            font-size: 1.2em;
+            color: #000000;
+            margin-top: 8px;
+        }
+
+        .material-icons {
+            font-size: 1.5em;
+            color: #000000;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand me-3" href="#">UrbanMaven</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item mx-3">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link" href="#services-list">Services</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link" href="#booking">Booking</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link" href="#">Wallet</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                    <li class="nav-item mx-3">
+                        <a class="nav-link" href="#">Profile</a>
+                    </li>
+                </ul>
+                <form class="d-flex me-3" role="search">
+                    <input class="form-control form-control-sm me-2" type="search" placeholder="Search"
+                        aria-label="Search" style="width: 300px;">
+                    <button class="btn btn-search btn-sm" type="submit">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                </form>
+                <button type="button" class="btn btn-light">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Big Card Section -->
+    <div class="container-fluid text-light p-4">
+        <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+                <h1 class="display-4">UrbanMaven: Making the City Stylish</h1>
+                <p class="lead">Join us to explore the best Stylists.</p>
+                <div class="col-md-6" style="width: 100%;">
+                    <label for="service-select">
+                        <h2>Where do you want a service?</h2>
+                    </label>
+                    <select id="service-select" class="form-select dropdown" aria-label="Select a region">
+                        <option selected>Select a region</option>
+                        <option value="6">Nova Scotia</option>
+                        <option value="1">Alberta</option>
+                        <option value="2">British Columbia</option>
+                        <option value="3">Manitoba</option>
+                        <option value="4">New Brunswick</option>
+                        <option value="5">Newfoundland and Labrador</option>
+                        <option value="7">Ontario</option>
+                        <option value="8">Prince Edward Island</option>
+                        <option value="9">Quebec</option>
+                        <option value="10">Saskatchewan</option>
+                        <option value="11">Northwest Territories</option>
+                        <option value="12">Nunavut</option>
+                        <option value="13">Yukon</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6 text-center">
+                <img src="/Beauty salon-pana.png" alt="Lady doing hair" class="img-fluid"
+                    style="max-width: 80%; height: auto;">
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <!-- Main Services List -->
+        <div id="services-list" class="services-list">
+
+            <div class="service-item" onclick="toggleSubcategories('hair')">
+                <i class="fas fa-cut" style="size: 5%;"></i> Hair Styling
+            </div>
+            <div class="service-item" onclick="toggleSubcategories('makeup')">
+                <i class="fas fa-paint-brush"></i> Makeup
+            </div>
+            <div class="service-item" onclick="toggleSubcategories('nails')">
+                <i class="fas fa-hand-sparkles"></i> Nail Art
+            </div>
+            <div class="service-item" onclick="toggleSubcategories('facials')">
+                <i class="fas fa-spa"></i> Facials
+            </div>
+            <div class="service-item" onclick="toggleSubcategories('spa')">
+                <i class="fas fa-hot-tub"></i> Spa Treatments
+            </div>
+            <div class="service-item" onclick="toggleSubcategories('grooming')">
+                <i class="fas fa-user-tie"></i> Personal Grooming
+            </div>
+        </div>
+        <center>
+            <hr class="divider">
+        </center>
+        <!-- Subcategory Lists for Each Main Service -->
+        <div id="hair" class="subcategory-container">
+            <div class="subcategory-item">Cutting</div>
+            <div class="subcategory-item">Coloring</div>
+            <div class="subcategory-item">Styling</div>
+        </div>
+
+        <div id="makeup" class="subcategory-container">
+            <div class="subcategory-item">Bridal Makeup</div>
+            <div class="subcategory-item">Event Makeup</div>
+            <div class="subcategory-item">Daily Makeup</div>
+        </div>
+
+        <div id="nails" class="subcategory-container">
+            <div class="subcategory-item">Acrylic Nails</div>
+            <div class="subcategory-item">Temporary Nails</div>
+            <div class="subcategory-item">Graphics</div>
+        </div>
+
+        <div id="facials" class="subcategory-container">
+            <div class="subcategory-item">Anti-Aging</div>
+            <div class="subcategory-item">Hydration</div>
+            <div class="subcategory-item">Brightening</div>
+        </div>
+
+        <div id="spa" class="subcategory-container">
+            <div class="subcategory-item">Massage</div>
+            <div class="subcategory-item">Sauna</div>
+            <div class="subcategory-item">Body Wrap</div>
+        </div>
+
+        <div id="grooming" class="subcategory-container">
+            <div class="subcategory-item">Shaving</div>
+            <div class="subcategory-item">Waxing</div>
+            <div class="subcategory-item">Threading</div>
+        </div>
+    </div>
+    <div id="dynamic-card-container" class="container-fluid"></div>
+    <!-- Satisfaction Guarantee Card -->
+    <section class="commitment-section">
+        <h2>Our Commitment to You</h2>
+        <div class="commitment-cards">
+            <div class="commitment-card">
+                <div class="icon"><span class="material-icons">sentiment_very_satisfied</span></div>
+                <h3>Happiness</h3>
+                <p>We prioritize customer satisfaction and create moments of joy.</p>
+            </div>
+            <div class="commitment-card">
+                <div class="icon"><span class="material-icons">star_rate</span></div>
+                <h3>Satisfaction</h3>
+                <p>Delivering high-quality services that exceed your expectations.</p>
+            </div>
+            <div class="commitment-card">
+                <div class="icon"><span class="material-icons">headphones</span></div>
+                <h3>Support</h3>
+                <p>Dedicated support to ensure your needs are met around the clock.</p>
+            </div>
+        </div>
+    </section>
+    <section class="how-it-works-section">
+        <h2>How It Works</h2>
+        <div class="steps-cards">
+            <div class="step-card">
+                <div class="icon"><span class="material-icons">search</span></div>
+                <h3>Step 1</h3>
+                <h4>Search</h4>
+                <p>Find your preferred service by browsing through our selection.</p>
+            </div>
+            <div class="step-card">
+                <div class="icon"><span class="material-icons">calendar_today</span></div>
+                <h3>Step 2</h3>
+                <h4>Book</h4>
+                <p>Select a provider and schedule that fits your needs.</p>
+            </div>
+            <div class="step-card">
+                <div class="icon"><span class="material-icons material-symbols-outlined">
+                    content_cut
+                    </span></div>
+                <h3>Step 3</h3>
+                <h4>Receive Service</h4>
+                <p>Enjoy top-notch salon care from our professionals.</p>
+            </div>
+            <div class="step-card">
+                <div class="icon"><span class="material-icons">credit_card</span></div>
+                <h3>Step 4</h3>
+                <h4>Pay</h4>
+                <p>Complete payment securely after your service.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- JavaScript for Dropdown -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const serviceSelect = document.getElementById('service-select');
+            serviceSelect.addEventListener('change', function () {
+                alert('You selected: ' + serviceSelect.options[serviceSelect.selectedIndex].text);
+            });
+        });
+        function toggleSubcategories(categoryId) {
+            // Remove 'active' class from all service items
+            document.querySelectorAll('.service-item').forEach(item => item.classList.remove('active'));
+
+            // Add 'active' class to the clicked item
+            const clickedItem = event.currentTarget;
+            clickedItem.classList.add('active');
+
+            // Hide all subcategory containers
+            document.querySelectorAll('.subcategory-container').forEach(container => {
+                container.style.display = 'none';
+            });
+
+            // Show the relevant subcategory container
+            const subcategory = document.getElementById(categoryId);
+            if (subcategory) {
+                subcategory.style.display = 'flex';
+            }
+        }
+
+        const stylists = {
+            "Cutting": [
+                { name: "Alice Smith", rating: 4.5 },
+                { name: "John Doe", rating: 4.2 },
+                { name: "Emma Brown", rating: 4.8 },
+                { name: "Sophia Davis", rating: 4.7 },
+                { name: "James Wilson", rating: 4.3 },
+                { name: "Olivia Martinez", rating: 4.6 },
+                { name: "Liam Garcia", rating: 4.4 },
+                { name: "Mia Thomas", rating: 4.9 },
+                { name: "Charlotte White", rating: 4.5 },
+            ],
+            "Coloring": [
+                { name: "Sophia Davis", rating: 4.7 },
+                { name: "James Wilson", rating: 4.3 },
+                { name: "Olivia Martinez", rating: 4.6 },
+                { name: "Liam Garcia", rating: 4.4 },
+                { name: "Mia Thomas", rating: 4.9 },
+                { name: "Charlotte White", rating: 4.5 },
+                { name: "Alice Smith", rating: 4.5 },
+                { name: "John Doe", rating: 4.2 },
+                { name: "Emma Brown", rating: 4.8 },
+            ],
+            "Styling": [
+                { name: "Liam Garcia", rating: 4.4 },
+                { name: "Mia Thomas", rating: 4.9 },
+                { name: "Charlotte White", rating: 4.5 },
+                { name: "Alice Smith", rating: 4.5 },
+                { name: "John Doe", rating: 4.2 },
+                { name: "Emma Brown", rating: 4.8 },
+                { name: "Sophia Davis", rating: 4.7 },
+                { name: "James Wilson", rating: 4.3 },
+                { name: "Olivia Martinez", rating: 4.6 },
+            ]
+        };
+
+        function toggleSubcategories(categoryId) {
+            // Remove 'active' class from all service items
+            document.querySelectorAll('.service-item').forEach(item => item.classList.remove('active'));
+
+            // Add 'active' class to the clicked item
+            const clickedItem = event.currentTarget;
+            clickedItem.classList.add('active');
+
+            // Hide all subcategory containers
+            document.querySelectorAll('.subcategory-container').forEach(container => {
+                container.style.display = 'none';
+            });
+
+            // Show the relevant subcategory container
+            const subcategory = document.getElementById(categoryId);
+            if (subcategory) {
+                subcategory.style.display = 'flex';
+            }
+
+            // Add click event listeners to subcategory items
+            subcategory.querySelectorAll('.subcategory-item').forEach(item => {
+                item.addEventListener('click', () => showStylistCard(item.innerText));
+            });
+        }
+
+        function showStylistCard(subcategory) {
+            const container = document.getElementById("dynamic-card-container");
+            container.innerHTML = "";
+
+            const card = document.createElement("div");
+            card.className = "card new-card";
+
+            card.innerHTML = `
+        <div class="container">
+            <div class="row">
+                <!-- Left Section: Location Input -->
+                <div class="col-md-6 left-section">
+                    <div class="card-list1 p-3">
+                        <h4><p><b>What's your location?</b></p></h4>
+                        <h5><label for="location">Location:</label></h5>
+                        <input type="text" id="location" class="form-control" placeholder="Enter your location">
+                    </div>
+                </div>
+
+                <!-- Right Section: Stylist List -->
+                <div class="col-md-6 right-section">
+                    <div class="card-list p-3">
+                        <h3 class="heading">${subcategory} Stylists</h3>
+                        <div class="custom-dropdown">
+                            ${stylists[subcategory].map(stylist => `
+                                <div class="stylist-option">
+                                    <div class="stylist-details">
+                                        <span class="stylist-name">${stylist.name}</span>
+                                        <span class="stylist-rating" style="color: gray; font-size: 0.9em;">
+                                            &#9733; ${stylist.rating}
+                                        </span>
+                                    </div>
+                                    <button class="btn btn-primary book-btn">Book</button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+            container.appendChild(card);
+            card.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        function submitLocation() {
+            // Get the value of the input field
+            const location = document.getElementById('location').value;
+            // Display or log the location value
+            alert('Location: ' + location); // You can also use console.log(location) if you prefer logging to the console
+        }
+
+
+    </script>
+</body>
+
+</html>
